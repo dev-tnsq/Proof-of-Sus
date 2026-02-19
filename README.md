@@ -259,18 +259,3 @@ Ensure:
 - Freighter extension is installed and unlocked,
 - request URL contains `requestId` for signing mode.
 
----
-
-## Credits
-
-- [Innersloth](https://www.innersloth.com) for the original game inspiration and assets source context.
-- [kidscancode](https://github.com/kidscancode) tutorials/samples as initial base references.
-- [Albert-91](https://github.com/Albert-91) project references.
-- [PlainSight](https://github.com/PlainSight) multiplayer reference work.
-- [TomPrograms](https://github.com/TomPrograms/Python-Voice-Chat) voice-chat reference base.
-
----
-
-## License
-
-See [LICENSE](LICENSE).
