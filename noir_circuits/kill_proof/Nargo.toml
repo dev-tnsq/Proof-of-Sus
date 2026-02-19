@@ -1,0 +1,7 @@
+[package]
+name = "kill_proof"
+type = "bin"
+authors = [""]
+compiler_version = "*"
+
+[dependencies]
