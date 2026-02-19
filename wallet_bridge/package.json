@@ -1,0 +1,18 @@
+{
+  "name": "wallet-bridge",
+  "version": "1.0.0",
+  "description": "Local signing bridge — Pygame talks here, browser signs via Freighter",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "dev": "node --watch server.js"
+  },
+  "dependencies": {
+    "cors": "^2.8.5",
+    "express": "^4.18.3",
+    "uuid": "^9.0.1"
+  },
+  "engines": {
+    "node": ">=18"
+  }
+}

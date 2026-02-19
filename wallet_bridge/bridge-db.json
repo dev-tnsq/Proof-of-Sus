@@ -1,0 +1,203 @@
+{
+  "sessions": {
+    "test-player": {
+      "playerId": "test-player",
+      "displayName": "ShivanshTest",
+      "address": null,
+      "network": null,
+      "connectedAt": null
+    },
+    "test-p1": {
+      "playerId": "test-p1",
+      "displayName": "Shivansh",
+      "address": null,
+      "network": null,
+      "connectedAt": null
+    },
+    "py-test": {
+      "playerId": "py-test",
+      "displayName": "PythonTest",
+      "address": null,
+      "network": null,
+      "connectedAt": null
+    }
+  },
+  "requests": {
+    "2f9c391d-905f-4c19-8557-2853cfe09bb8": {
+      "requestId": "2f9c391d-905f-4c19-8557-2853cfe09bb8",
+      "playerId": "test-player",
+      "action": "join_game",
+      "xdr": "AAAADEMO123",
+      "networkPassphrase": "Test SDF Network ; September 2015",
+      "metadata": {
+        "phase": "lobby"
+      },
+      "status": "pending",
+      "signedXdr": null,
+      "walletAddress": null,
+      "error": null,
+      "createdAt": 1771525246917,
+      "updatedAt": 1771525246917
+    },
+    "c4e3bf69-e672-4444-aed3-116647f4e6e5": {
+      "requestId": "c4e3bf69-e672-4444-aed3-116647f4e6e5",
+      "playerId": "test-p1",
+      "action": "join_game",
+      "xdr": "AAAADEMO",
+      "networkPassphrase": "Test SDF Network ; September 2015",
+      "metadata": {
+        "phase": "lobby"
+      },
+      "status": "pending",
+      "signedXdr": null,
+      "walletAddress": null,
+      "error": null,
+      "createdAt": 1771525340606,
+      "updatedAt": 1771525340606
+    },
+    "0b7b8319-0ac1-4d74-9ce9-9acc9be75d13": {
+      "requestId": "0b7b8319-0ac1-4d74-9ce9-9acc9be75d13",
+      "playerId": "test-p1",
+      "action": "join_game",
+      "xdr": "AAAADEMO",
+      "networkPassphrase": "Test SDF Network ; September 2015",
+      "metadata": {},
+      "status": "signed",
+      "signedXdr": "AAAA_SIGNED_XDR",
+      "walletAddress": "GTEST123ABC",
+      "error": null,
+      "createdAt": 1771525346640,
+      "updatedAt": 1771525365401
+    },
+    "51e61483-8dd2-4fcb-9fba-a594c35049e2": {
+      "requestId": "51e61483-8dd2-4fcb-9fba-a594c35049e2",
+      "playerId": "py-test",
+      "action": "join_game",
+      "xdr": "AAAAXDR",
+      "networkPassphrase": "Test SDF Network ; September 2015",
+      "metadata": {
+        "phase": "lobby"
+      },
+      "status": "pending",
+      "signedXdr": null,
+      "walletAddress": null,
+      "error": null,
+      "createdAt": 1771525404670,
+      "updatedAt": 1771525404670
+    },
+    "c48d0bce-8cee-4c6f-b61d-190ea9ffaef1": {
+      "requestId": "c48d0bce-8cee-4c6f-b61d-190ea9ffaef1",
+      "playerId": "py-test",
+      "action": "join_game",
+      "xdr": "AAAADEMOEXDR",
+      "networkPassphrase": "Test SDF Network ; September 2015",
+      "metadata": {
+        "phase": "lobby"
+      },
+      "status": "signed",
+      "signedXdr": "AAAA_SIGNED_XDR",
+      "walletAddress": "GTEST123",
+      "error": null,
+      "createdAt": 1771525439710,
+      "updatedAt": 1771525441213
+    },
+    "2eb8dee3-4e40-4811-a7b8-efc17dd2274e": {
+      "requestId": "2eb8dee3-4e40-4811-a7b8-efc17dd2274e",
+      "playerId": "py-test",
+      "action": "join_game",
+      "xdr": "AAAADEMOEXDR",
+      "networkPassphrase": "Test SDF Network ; September 2015",
+      "metadata": {
+        "phase": "lobby"
+      },
+      "status": "signed",
+      "signedXdr": "AAAA_SIGNED_XDR",
+      "walletAddress": "GTEST123",
+      "error": null,
+      "createdAt": 1771525448423,
+      "updatedAt": 1771525449931
+    },
+    "5b23fb11-4218-467c-9b5a-65a6dd0ff894": {
+      "requestId": "5b23fb11-4218-467c-9b5a-65a6dd0ff894",
+      "playerId": "py-test",
+      "action": "join_game",
+      "xdr": "AAAADEMOEXDR",
+      "networkPassphrase": "Test SDF Network ; September 2015",
+      "metadata": {
+        "phase": "lobby"
+      },
+      "status": "signed",
+      "signedXdr": "AAAA_SIGNED_XDR",
+      "walletAddress": "GTEST123",
+      "error": null,
+      "createdAt": 1771528561990,
+      "updatedAt": 1771528563498
+    },
+    "ed39bd34-3c77-4067-8a27-93536b2faf31": {
+      "requestId": "ed39bd34-3c77-4067-8a27-93536b2faf31",
+      "playerId": "py-test",
+      "action": "join_game",
+      "xdr": "AAAADEMOEXDR",
+      "networkPassphrase": "Test SDF Network ; September 2015",
+      "metadata": {
+        "phase": "lobby"
+      },
+      "status": "signed",
+      "signedXdr": "AAAA_SIGNED_XDR",
+      "walletAddress": "GTEST123",
+      "error": null,
+      "createdAt": 1771528568133,
+      "updatedAt": 1771528569641
+    },
+    "5475d996-55ae-46ca-8294-0ef06c1090cc": {
+      "requestId": "5475d996-55ae-46ca-8294-0ef06c1090cc",
+      "playerId": "py-test",
+      "action": "join_game",
+      "xdr": "AAAADEMOEXDR",
+      "networkPassphrase": "Test SDF Network ; September 2015",
+      "metadata": {
+        "phase": "lobby"
+      },
+      "status": "signed",
+      "signedXdr": "AAAA_SIGNED_XDR",
+      "walletAddress": "GTEST123",
+      "error": null,
+      "createdAt": 1771531557179,
+      "updatedAt": 1771531558686
+    },
+    "637588df-ced7-4630-9248-d9eb9c60f3a8": {
+      "requestId": "637588df-ced7-4630-9248-d9eb9c60f3a8",
+      "playerId": "py-test",
+      "action": "join_game",
+      "xdr": "AAAADEMOEXDR",
+      "networkPassphrase": "Test SDF Network ; September 2015",
+      "metadata": {
+        "phase": "lobby"
+      },
+      "status": "signed",
+      "signedXdr": "AAAA_SIGNED_XDR",
+      "walletAddress": "GTEST123",
+      "error": null,
+      "createdAt": 1771531977708,
+      "updatedAt": 1771531979214
+    }
+  },
+  "snapshots": {
+    "test-p1": {
+      "playerId": "test-p1",
+      "snapshot": {
+        "phase": "lobby",
+        "tasks": 2
+      },
+      "savedAt": 1771525379312
+    },
+    "py-test": {
+      "playerId": "py-test",
+      "snapshot": {
+        "phase": "playing",
+        "tasks": 3
+      },
+      "savedAt": 1771531979227
+    }
+  }
+}

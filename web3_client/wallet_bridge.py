@@ -5,7 +5,7 @@ from urllib import request, error
 
 
 class WalletBridgeClient:
-    def __init__(self, base_url="http://127.0.0.1:8787"):
+    def __init__(self, base_url="http://127.0.0.1:8789"):
         self.base_url = base_url.rstrip("/")
 
     def _get(self, path):

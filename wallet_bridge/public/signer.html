@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Proof-of-Sus — Wallet Signer</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: 'Segoe UI', system-ui, sans-serif;
+      background: #0f1117;
+      color: #e8eaf6;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 100vh;
+      padding: 24px;
+    }
+
+    .card {
+      background: #1a1d2e;
+      border: 1px solid #2e3154;
+      border-radius: 16px;
+      padding: 36px 40px;
+      width: 100%;
+      max-width: 540px;
+      box-shadow: 0 8px 40px rgba(0,0,0,0.5);
+    }
+
+    .logo {
+      font-size: 22px;
+      font-weight: 700;
+      color: #7c85ff;
+      margin-bottom: 6px;
+      letter-spacing: 0.5px;
+    }
+
+    .subtitle {
+      font-size: 13px;
+      color: #6b7280;
+      margin-bottom: 28px;
+    }
+
+    h2 {
+      font-size: 18px;
+      font-weight: 600;
+      color: #c7d2fe;
+      margin-bottom: 20px;
+    }
+
+    .info-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      padding: 10px 0;
+      border-bottom: 1px solid #2e3154;
+      font-size: 14px;
+      gap: 8px;
+    }
+
+    .info-row:last-of-type { border-bottom: none; }
+
+    .info-label { color: #9ca3af; white-space: nowrap; }
+
+    .info-value {
+      color: #e2e8f0;
+      text-align: right;
+      word-break: break-all;
+      max-width: 320px;
+    }
+
+    .xdr-box {
+      background: #12131f;
+      border: 1px solid #2e3154;
+      border-radius: 8px;
+      padding: 12px;
+      font-family: monospace;
+      font-size: 11px;
+      color: #94a3b8;
+      max-height: 120px;
+      overflow-y: auto;
+      word-break: break-all;
+      margin: 16px 0;
+    }
+
+    .actions {
+      display: flex;
+      gap: 12px;
+      margin-top: 24px;
+    }
+
+    button {
+      flex: 1;
+      padding: 12px 20px;
+      border: none;
+      border-radius: 10px;
+      font-size: 15px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: opacity 0.15s, transform 0.1s;
+    }
+
+    button:active { transform: scale(0.97); }
+    button:disabled { opacity: 0.45; cursor: not-allowed; }
+
+    .btn-primary { background: #4f46e5; color: #fff; }
+    .btn-primary:hover:not(:disabled) { background: #6366f1; }
+
+    .btn-danger { background: #7f1d1d; color: #fca5a5; }
+    .btn-danger:hover:not(:disabled) { background: #991b1b; }
+
+    .status-box {
+      margin-top: 20px;
+      padding: 14px 16px;
+      border-radius: 10px;
+      font-size: 14px;
+      line-height: 1.5;
+      display: none;
+    }
+
+    .status-box.show { display: block; }
+    .status-box.info    { background: #1e2a4a; border: 1px solid #3b4fc8; color: #a5b4fc; }
+    .status-box.success { background: #052e16; border: 1px solid #166534; color: #86efac; }
+    .status-box.error   { background: #2d0a0a; border: 1px solid #7f1d1d; color: #fca5a5; }
+    .status-box.waiting { background: #1a1a3a; border: 1px solid #4f46e5; color: #c7d2fe; }
+
+    .spinner {
+      display: inline-block;
+      width: 14px; height: 14px;
+      border: 2px solid #4f46e5;
+      border-top-color: transparent;
+      border-radius: 50%;
+      animation: spin 0.7s linear infinite;
+      vertical-align: middle;
+      margin-right: 8px;
+    }
+
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    .address-chip {
+      display: inline-block;
+      background: #1e2a4a;
+      border: 1px solid #3b4fc8;
+      border-radius: 6px;
+      padding: 4px 10px;
+      font-family: monospace;
+      font-size: 12px;
+      color: #a5b4fc;
+      margin-top: 4px;
+    }
+  </style>
+</head>
+<body>
+  <div class="card">
+    <div class="logo">Proof-of-Sus</div>
+    <div class="subtitle">Localhost wallet bridge — non-custodial</div>
+
+    <div id="loading">
+      <span class="spinner"></span> Loading request…
+    </div>
+
+    <!-- Connect-only panel -->
+    <div id="panel-connect" style="display:none">
+      <h2>Connect your Stellar wallet</h2>
+      <p style="color:#9ca3af;font-size:14px;margin-bottom:20px;">
+        The game is waiting for your wallet address. Click below to connect
+        Freighter and authorise this app.
+      </p>
+      <div class="actions">
+        <button class="btn-primary" id="btn-connect">Connect Freighter</button>
+      </div>
+    </div>
+
+    <!-- Sign request panel -->
+    <div id="panel-sign" style="display:none">
+      <h2>Sign transaction</h2>
+      <div id="req-details"></div>
+      <div class="xdr-box" id="xdr-preview"></div>
+      <div class="actions">
+        <button class="btn-danger"   id="btn-reject">Reject</button>
+        <button class="btn-primary"  id="btn-sign">Sign with Freighter</button>
+      </div>
+    </div>
+
+    <div class="status-box" id="status-box"></div>
+  </div>
+
+  <script type="module" src="/signer.js"></script>
+</body>
+</html>

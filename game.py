@@ -27,6 +27,10 @@ BUFFERSIZE = 8192
 class Game:
     def __init__(self):
         pg.init()
+        pg.font.init()   # ensure font module is ready
+        # Pre-load Web3 HUD fonts (built-in pygame font — always available)
+        self._web3_hud_font  = pg.font.Font(None, 20)   # permanent bar
+        self._web3_toast_font = pg.font.Font(None, 24)  # toast line
         # pg.mixer.init()
         self.screen = pg.display.set_mode((WIDTH, HEIGHT))
         self.board = Board(WIDTH, HEIGHT, self)
@@ -258,6 +262,8 @@ class Game:
         # Light Bulb timer Icon status
         self.light_bulb_timer_icon_status = True
         self.light_bulb_timer_icon_dim_status = True
+        # Web3 mode — populated when runweb3() is called
+        self.web3_mode = None
         self.load_data()
 
     # THIS METHOD LOADS EVERYTHING FROM PROJECT DIRECTORIES
@@ -1003,6 +1009,8 @@ class Game:
             if self.paused == False:
                 self.update()
             self.draw()
+            if self.web3_mode:
+                self.web3_mode.tick()
 
             self.killcooldown = pygame.time.get_ticks()
             self.sabotagecooldown = pygame.time.get_ticks()
@@ -1064,6 +1072,62 @@ class Game:
                     m.stop()
                 self.effect_sounds["game_left"].play()
                 return
+
+    def runweb3(self):
+        """Run a game session in Web3 mode (Stellar Soroban + Freighter wallet)."""
+        from web3_client.web3_game_mode import Web3GameMode
+        player_name = getattr(self, 'player_name', None) or (self.menu.word if hasattr(self, 'menu') else 'player')
+        try:
+            self.web3_mode = Web3GameMode.connect(
+                player_id=player_name,
+                display_name=self.player_colour,
+            )
+        except Exception as exc:
+            # Bridge is completely down — inform user but still start game
+            print(f"[web3] Bridge unavailable: {exc}")
+            self.web3_mode = None
+        self.new()
+        if self.web3_mode:
+            self.web3_mode.on_join(self.player_colour, player_name)
+        self.runfreeplay()
+        self.web3_mode = None
+
+    def _draw_web3_toast(self):
+        """Overlay Web3 HUD: solid top bar + solid bottom toast."""
+        if not self.web3_mode:
+            return
+
+        def _safe(s):
+            # Replace unicode/emoji -> ASCII so built-in pygame font renders
+            tbl = {
+                '✦': '*',  '⏳': '...',  '🔐': '[ZK]',
+                '⚠': '!',  '✓': 'OK',   '✗': 'ERR',
+                '…': '...', '→': '->',
+            }
+            r = str(s)
+            for k, v in tbl.items():
+                r = r.replace(k, v)
+            return r.encode('ascii', errors='replace').decode('ascii')
+
+        sw = self.screen.get_width()
+        sh = self.screen.get_height()
+
+        # top bar: always visible while in Web3 mode
+        perm    = _safe(getattr(self.web3_mode, '_permanent_msg', None) or '[Web3] Mode')
+        perm_ok = getattr(self.web3_mode, '_permanent_ok', True)
+        pg.draw.rect(self.screen, (0, 0, 0), (0, 0, sw, 22))
+        pc   = (80, 255, 80) if perm_ok else (255, 180, 40)
+        ptxt = self._web3_hud_font.render(perm[:120], True, pc)
+        self.screen.blit(ptxt, (6, 3))
+
+        # bottom toast: transient per-action feedback
+        msg = self.web3_mode.status_message
+        if not msg:
+            return
+        tc   = (80, 255, 80) if self.web3_mode.status_ok else (255, 80, 80)
+        ttxt = self._web3_toast_font.render(_safe(msg)[:110], True, tc)
+        pg.draw.rect(self.screen, (0, 0, 0), (0, sh - 30, sw, 30))
+        self.screen.blit(ttxt, (6, sh - 27))
 
     def runmultiplayer(self):
         # Game main loop - set self.playing = False to end the game
@@ -1554,6 +1618,12 @@ class Game:
                             self.bot_count -= 1
                             self.bot1.alive_status = False
                             self.bot1.play_kill_count += 1
+                            if self.web3_mode:
+                                self.web3_mode.on_kill(
+                                    int(self.player.pos.x), int(self.player.pos.y),
+                                    int(self.bot1.pos.x), int(self.bot1.pos.y),
+                                    f"bot1:{self.bot1.bot_colour}",
+                                )
                             self.kill_timer_icon_status = True
                             # if time taken to cooldown for kill > 15, i.e time_to_kill = 0, means that now we can kill a bot, then again
                             # reset time_left_to_kill to 15 that will show time interval after, which we can again kill a bot.
@@ -2387,6 +2457,8 @@ class Game:
                             self.clear_asteroid_task_play_count -= 1
                             if self.increment_in_missions == 1:
                                 self.missions_done += 1
+                                if self.web3_mode:
+                                    self.web3_mode.on_task_complete(self.missions_done)
                             self.increment_in_missions -= 1
                         break
 
@@ -2602,6 +2674,7 @@ class Game:
                 self.timer_start = pygame.time.get_ticks()
             self.display_kill_victim_anim()  # this layer is beneath the screen
 
+        self._draw_web3_toast()
         pg.display.flip()
 
     def events(self):
@@ -2840,6 +2913,8 @@ class Game:
                     self.stabilize_target_btn1_status = False
                     self.target_center_sel_count -= 1
                     self.missions_done += 1
+                    if self.web3_mode:
+                        self.web3_mode.on_task_complete(self.missions_done)
                     print(self.missions_done)
             if event.type == pg.MOUSEBUTTONDOWN and event.button == LEFT_MOUSE_BUTTON and not self.paused and self.stabilize_steering_window_status:
                 pos = pg.mouse.get_pos()
@@ -2867,6 +2942,8 @@ class Game:
                     self.garbage_liver_Up_sel_count -= 1
                     self.empty_garbage_task_play_count -= 1
                     self.missions_done += 1
+                    if self.web3_mode:
+                        self.web3_mode.on_task_complete(self.missions_done)
                     print(self.missions_done)
             if event.type == pg.MOUSEBUTTONDOWN and event.button == LEFT_MOUSE_BUTTON and not self.paused and self.empty_garbage_window_status:
                 pos = pg.mouse.get_pos()
@@ -2894,6 +2971,8 @@ class Game:
                     self.reboot_wifi_liver_sel_count -= 1
                     self.reboot_wifi_task_play_count -= 1
                     self.missions_done += 1
+                    if self.web3_mode:
+                        self.web3_mode.on_task_complete(self.missions_done)
                     print(self.missions_done)
             if event.type == pg.MOUSEBUTTONDOWN and event.button == LEFT_MOUSE_BUTTON and not self.paused and self.reboot_wifi_window_status:
                 pos = pg.mouse.get_pos()
@@ -2996,6 +3075,8 @@ class Game:
                     self.effect_sounds['fix_electric_wires_BG'].fadeout(500)
                     self.effect_sounds['fixed_electric_wires_BG'].play(-1)
                     self.missions_done += 1
+                    if self.web3_mode:
+                        self.web3_mode.on_task_complete(self.missions_done)
                     self.electricity_wire_task_play_count -= 1
                     self.electricity_wires_fixed_count += 1
                     print(self.electricity_wires_fixed_count)
@@ -3033,6 +3114,8 @@ class Game:
                     self.divert_power_to_reactor_task_play_count -= 1
                     self.divert_power_to_reactor_liversUP_sel_count -= 1
                     self.missions_done += 1
+                    if self.web3_mode:
+                        self.web3_mode.on_task_complete(self.missions_done)
                 elif self.divert_power_to_reactor_close_btn.click(pos):
                     self.effect_sounds['go_back'].play()
                     self.effect_sounds['fix_electric_wires_BG'].fadeout(500)
@@ -3059,6 +3142,8 @@ class Game:
                     self.align_engine_liver_pos_btn2_sel_count -= 1
                     self.align_engine_output_task_play_count -=1
                     self.missions_done += 1
+                    if self.web3_mode:
+                        self.web3_mode.on_task_complete(self.missions_done)
                 # if player has not click on button 1 and he then clicks button 2 then play error sound
                 if self.align_engine_liver_pos_btn2.click(pos) and self.align_engine_liver_pos_btn1_sel_count == 1:
                     self.effect_sounds['imposter_kill_cooldown_sound'].play()
@@ -3090,6 +3175,8 @@ class Game:
                         self.fuel_engine_fill_btn_sel_count -=1
                         self.effect_sounds['task_completed'].play()
                         self.missions_done += 1
+                        if self.web3_mode:
+                            self.web3_mode.on_task_complete(self.missions_done)
                         self.is_gas_can_picked = False
                         self.fuel_engine_task_play_count -=1
 

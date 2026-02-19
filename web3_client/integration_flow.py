@@ -2,7 +2,7 @@ from web3_client.wallet_bridge import WalletBridgeClient
 
 
 class Web3GameplayBridge:
-    def __init__(self, player_id, display_name, bridge_url="http://127.0.0.1:8787"):
+    def __init__(self, player_id, display_name, bridge_url="http://127.0.0.1:8789"):
         self.player_id = player_id
         self.display_name = display_name
         self.wallet = WalletBridgeClient(bridge_url)

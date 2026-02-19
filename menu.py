@@ -59,7 +59,7 @@ class Menu:
             self.music_playing = False
             return
         elif 300 < self.pos_y < 385:
-            self.game.gamemode = "Multiplayer"
+            self.game.gamemode = "Web3"
             self.game_choose_character()
             self.game.effect_sounds['main_menu_music'].stop()
             self.music_playing = False
@@ -174,6 +174,11 @@ class Menu:
                                 return
                             elif self.game.gamemode == "Multiplayer":
                                 self.game_input_address()
+                                return
+                            elif self.game.gamemode == "Web3":
+                                self.game.effect_sounds['main_menu_music'].stop()
+                                self.game.player_name = self.word
+                                self.game.runweb3()
                                 return
                     elif len(self.word) < self.word_count_name:
                         self.word += event.unicode
